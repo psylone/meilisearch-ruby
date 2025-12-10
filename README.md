@@ -238,15 +238,17 @@ JSON output:
 
 This feature is only available with Meilisearch v1.3 and newer (optional).
 
-#### Custom Search With attributes on at search time  <!-- omit in toc -->
+#### Custom Search with `attributes_to_search_on` <!-- omit in toc -->
 
 [Customize attributes to search on at search time](https://www.meilisearch.com/docs/reference/api/search#customize-attributes-to-search-on-at-search-time).
 
-you can perform the search :
+You can perform the search:
 
 ```ruby
 index.search('wonder', { attributes_to_search_on: ['genres'] })
 ```
+
+> 💡 Note: The `meilisearch-ruby` client automatically converts Ruby's `snake_case` parameters into `camelCase` to match the Meilisearch API's expectations.
 
 
 JSON output:
