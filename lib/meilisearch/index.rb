@@ -11,6 +11,7 @@ module Meilisearch
   class Index < HTTPRequest
     require 'meilisearch/index/documents'
     require 'meilisearch/index/search'
+    require 'meilisearch/index/facet_search'
 
     attr_reader :uid, :primary_key, :created_at, :updated_at
 
@@ -97,35 +98,6 @@ module Meilisearch
       @updated_at = Time.parse(index_hash['updatedAt'])
     end
     private :set_base_properties
-
-    ### FACET SEARCH
-
-    # Search for facet values.
-    #
-    #   client.index('books').facet_search('genres', 'fiction', filter: 'rating > 3')
-    #   # {
-    #   #   "facetHits": [
-    #   #     {
-    #   #       "value": "fiction",
-    #   #       "count": 7
-    #   #     }
-    #   #   ],
-    #   #   "facetQuery": "fiction",
-    #   #   "processingTimeMs": 0
-    #   # }
-    #
-    # @param name [String] Facet name to search values on.
-    # @param query [String] Search query for a given facet value.
-    # @param options [Hash{Symbol => Object}] Additional options, see API Reference.
-    # @return [Hash{String => Object}] Facet search result.
-    #
-    # @see https://www.meilisearch.com/docs/reference/api/facet_search Meilisearch API Reference
-    def facet_search(name, query = '', **options)
-      options.merge!(facet_name: name, facet_query: query)
-      options = Utils.transform_attributes(options)
-
-      http_post("/indexes/#{@uid}/facet-search", options)
-    end
 
     ### TASKS
 
