@@ -10,6 +10,7 @@ module Meilisearch
   # @see https://www.meilisearch.com/docs/learn/getting_started/indexes Learn more about indexes
   class Index < HTTPRequest
     require 'meilisearch/index/documents'
+    require 'meilisearch/index/search'
 
     attr_reader :uid, :primary_key, :created_at, :updated_at
 
@@ -96,45 +97,6 @@ module Meilisearch
       @updated_at = Time.parse(index_hash['updatedAt'])
     end
     private :set_base_properties
-
-    ### SEARCH
-
-    # Run a search on this index.
-    #
-    # Check Meilisearch API Reference for all options.
-    #
-    # @param query [String] The query string for the search.
-    # @param options [Hash{Symbol => Object}] Search options.
-    #
-    # @return [Hash{String => Object}] Search results
-    # @see https://www.meilisearch.com/docs/reference/api/search#search-in-an-index-with-post Meilisearch API Reference
-    def search(query, options = {})
-      attributes = { q: query.to_s }.merge(options.compact)
-
-      parsed_options = Utils.transform_attributes(attributes)
-      response = http_post "/indexes/#{@uid}/search", parsed_options
-
-      response['nbHits'] ||= response['estimatedTotalHits'] unless response.key?('totalPages')
-
-      response
-    end
-
-    # Run a search for semantically similar documents.
-    #
-    # An embedder must be configured and specified.
-    # Check Meilisearch API Reference for all options.
-    #
-    # @param document_id [String, Integer] The base document for comparisons.
-    # @param options [Hash{Symbol => Object}] Search options. Including a mandatory :embedder option.
-    #
-    # @return [Hash{String => Object}] Search results
-    # @see https://www.meilisearch.com/docs/reference/api/similar#get-similar-documents-with-post Meilisearch API Reference
-    def search_similar_documents(document_id, **options)
-      options.merge!(id: document_id)
-      options = Utils.transform_attributes(options)
-
-      http_post("/indexes/#{@uid}/similar", options)
-    end
 
     ### FACET SEARCH
 
