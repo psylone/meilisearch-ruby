@@ -22,6 +22,13 @@ module Meilisearch
         stats['numberOfDocuments']
       end
 
+      # Get the filed distribution of documents in the index.
+      #
+      # Calls {#stats}
+      def field_distribution
+        stats['fieldDistribution']
+      end
+
       # Whether the index is currently in the middle of indexing documents.
       #
       # Calls {#stats}
