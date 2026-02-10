@@ -13,15 +13,6 @@ delete_documents_by_filter_1: |-
   client.index('movies').delete_documents(filter: 'genres = action OR genres = adventure')
 get_documents_1: |-
   client.index('movies').get_documents(limit: 2, filter: 'genres = action')
-getting_started_faceting: |-
-  client.index('movies').update_faceting({
-    max_values_per_facet: 2,
-    sort_facet_values_by: {
-      genres: 'count'
-    }
-  })
-getting_started_pagination: |-
-  client.index('movies').update_pagination(max_total_hits: 500)
 synonyms_guide_1: |-
   client.index('movies').update_synonyms({
     great: ['fantastic'],
@@ -42,32 +33,20 @@ date_guide_sortable_attributes_1: |-
   client.index('games').update_sortable_attributes(['release_timestamp'])
 date_guide_sort_1: |-
   client.index('games').search('', sort: ['release_timestamp:desc'])
-async_guide_filter_by_date_1: |-
-  client.get_tasks(after_enqueued_at: DateTime.new(2020, 10, 11, 11, 49, 53))
 async_guide_multiple_filters_1: |-
   client.get_tasks(index_uids: ['movies'], types: ['documentAdditionOrUpdate', 'documentDeletion'], statuses: ['processing'])
-async_guide_filter_by_ids_1: |-
-  client.get_tasks(uids: [5, 10, 13])
 async_guide_filter_by_statuses_1: |-
   client.get_tasks(statuses: ['failed', 'canceled'])
-async_guide_filter_by_types_1: |-
-  client.get_tasks(types: ['dumpCreation', 'indexSwap'])
-async_guide_filter_by_index_uids_1: |-
-  client.get_tasks(index_uids: ['movies'])
 delete_tasks_1: |-
   client.delete_tasks(uids: [1, 2])
 cancel_tasks_1: |-
   client.cancel_tasks(uids: [1, 2])
-async_guide_canceled_by_1: |-
-  client.get_tasks(canceled_by: [9, 15])
 swap_indexes_1: |-
   client.swap_indexes(['indexA', 'indexB'], ['indexX', 'indexY'])
 search_parameter_guide_hitsperpage_1: |-
   client.index('movies').search('', hits_per_page: 15)
 search_parameter_guide_page_1: |-
   client.index('movies').search('', page: 2)
-getting_started_typo_tolerance: |-
-  client.index('movies').update_typo_tolerance({ min_word_size_for_typos: { one_typo: 4 } })
 get_all_tasks_paginating_1: |-
   client.tasks(limit: 2, from: 10)
 get_all_tasks_paginating_2: |-
@@ -476,103 +455,8 @@ update_a_key_1: |-
   )
 delete_a_key_1: |-
   client.delete_key('6062abda-a5aa-4414-ac91-ecd7944c0f8d')
-security_guide_search_key_1: |-
-  client = MeiliSearch::Client.new('http://localhost:7700', 'apiKey')
-  client.index('patient_medical_records').search
-security_guide_update_key_1: |-
-  client = MeiliSearch::Client.new('http://localhost:7700', 'masterKey')
-  client.update_key('74c9c733-3368-4738-bbe5-1d18a5fecb37', description: 'Default Search API Key')
-security_guide_create_key_1: |-
-  client = MeiliSearch::Client.new('http://localhost:7700', 'masterKey')
-  client.create_key(
-    description: 'Search patient records key',
-    actions: ['search'],
-    indexes: ['patient_medical_records'],
-    expires_at: '2023-01-01T00:00:00Z'
-  )
-security_guide_list_keys_1: |-
-  client = MeiliSearch::Client.new('http://localhost:7700', 'masterKey')
-  client.keys
-security_guide_delete_key_1: |-
-  client = MeiliSearch::Client.new('http://localhost:7700', 'masterKey')
-  client.delete_key('ac5cd97d-5a4b-4226-a868-2d0eb6d197ab')
-tenant_token_guide_generate_sdk_1: |-
-  uid = '85c3c2f9-bdd6-41f1-abd8-11fcf80e0f76'
-  api_key = 'B5KdX2MY2jV6EXfUs6scSfmC...'
-  expires_at = Time.new(2025, 12, 20).utc
-  search_rules = {
-    'patient_medical_records' => {
-      'filter' => 'user_id = 1'
-    }
-  }
-
-  token = client.generate_tenant_token(uid, search_rules, api_key: api_key, expires_at: expires_at)
-tenant_token_guide_search_sdk_1: |-
-  front_end_client = MeiliSearch::Client.new('http://localhost:7700', token)
-
-  front_end_client.index('patient_medical_records').search('blood test')
-getting_started_update_ranking_rules: |-
-  client.index('movies').update_ranking_rules([
-    'exactness',
-    'words',
-    'typo',
-    'proximity',
-    'attribute',
-    'sort',
-    'release_date:asc',
-    'rank:desc'
-  ])
-getting_started_update_searchable_attributes: |-
-  client.index('movies').update_searchable_attributes([
-    'title'
-  ])
-getting_started_update_stop_words: |-
-  client.index('movies').update_stop_words(['the'])
 getting_started_check_task_status: |-
   client.task(0)
-getting_started_synonyms: |-
-  client.index('movies').update_synonyms({
-    winnie: ['piglet'],
-    piglet: ['winnie']
-  })
-getting_started_update_displayed_attributes: |-
-  client.index('movies').update_displayed_attributes([
-    'title',
-    'overview',
-    'poster'
-  ])
-getting_started_add_meteorites: |-
-  file = File.read('meteorites.json')
-  json = JSON.parse(file)
-
-  client.index('meteorites').add_documents(json)
-getting_started_configure_settings: |-
-  client.index('meteorites').update_settings({
-    filterable_attributes: ['mass', '_geo'],
-    sortable_attributes: ['mass', '_geo']
-  })
-getting_started_geo_radius: |-
-  client.index('meteorites').search('', { filter: '_geoRadius(46.9480, 7.4474, 210000)' })
-getting_started_geo_point: |-
-  client.index('meteorites').search('', { sort: ['_geoPoint(48.8583701, 2.2922926):asc'] })
-getting_started_sorting: |-
-  client.index('meteorites').search('', {
-    sort: ['mass:asc'],
-    filter: 'mass < 200'
-  })
-getting_started_filtering: |-
-  client.index('meteorites').search('', { filter: 'mass < 200' })
-landing_getting_started_1: |-
-  client = MeiliSearch::Client.new('http://localhost:7700', 'masterKey')
-
-  client.index('movies').add_documents([
-    { id: 1, title: 'Carol' },
-    { id: 2, title: 'Wonder Woman' },
-    { id: 3, title: 'Life of Pi' },
-    { id: 4, title: 'Mad Max: Fury Road' },
-    { id: 5, title: 'Moana' },
-    { id: 6, title: 'Philadelphia' }
-  ])
 get_typo_tolerance_1: |-
   index('books').typo_tolerance
 update_typo_tolerance_1: |-
@@ -598,8 +482,6 @@ typo_tolerance_guide_4: |-
       two_typos: 10
     }
   })
-typo_tolerance_guide_5: |-
-  index('books').update_typo_tolerance({ disable_on_numbers: true })
 search_parameter_guide_facet_stats_1: |-
   client.index('movie_ratings').search('Batman', {
     facets: ['genres', 'rating']
