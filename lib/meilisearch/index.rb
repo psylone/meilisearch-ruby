@@ -12,6 +12,7 @@ module Meilisearch
     require 'meilisearch/index/documents'
     require 'meilisearch/index/search'
     require 'meilisearch/index/facet_search'
+    require 'meilisearch/index/stats'
 
     attr_reader :uid, :primary_key, :created_at, :updated_at
 
@@ -125,33 +126,6 @@ module Meilisearch
     # @see Task#wait_for_task
     def wait_for_task(task_uid, timeout_in_ms = 5000, interval_in_ms = 50)
       task_endpoint.wait_for_task(task_uid, timeout_in_ms, interval_in_ms)
-    end
-
-    ### STATS
-
-    # Get stats of this index.
-    #
-    # @return [Hash{String => Object}]
-    # @see https://www.meilisearch.com/docs/reference/api/stats#get-stats-of-an-index  Meilisearch API Reference
-    def stats
-      http_get "/indexes/#{@uid}/stats"
-    end
-
-    # Get the number of documents in the index.
-    #
-    # Calls {#stats}
-    #
-    # @return [Integer]
-    def number_of_documents
-      stats['numberOfDocuments']
-    end
-
-    # Whether the index is currently in the middle of indexing documents.
-    #
-    # Calls {#stats}
-    # @return [Boolean]
-    def indexing?
-      stats['isIndexing']
     end
 
     ### COMPACT
