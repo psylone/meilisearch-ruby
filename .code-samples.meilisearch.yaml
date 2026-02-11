@@ -455,6 +455,21 @@ update_a_key_1: |-
   )
 delete_a_key_1: |-
   client.delete_key('6062abda-a5aa-4414-ac91-ecd7944c0f8d')
+tenant_token_guide_generate_sdk_1: |-
+  uid = '85c3c2f9-bdd6-41f1-abd8-11fcf80e0f76'
+  api_key = 'B5KdX2MY2jV6EXfUs6scSfmC...'
+  expires_at = Time.new(2025, 12, 20).utc
+  search_rules = {
+    'patient_medical_records' => {
+      'filter' => 'user_id = 1'
+    }
+  }
+
+  token = client.generate_tenant_token(uid, search_rules, api_key: api_key, expires_at: expires_at)
+tenant_token_guide_search_sdk_1: |-
+  front_end_client = MeiliSearch::Client.new('http://localhost:7700', token)
+
+  front_end_client.index('patient_medical_records').search('blood test')
 getting_started_check_task_status: |-
   client.task(0)
 get_typo_tolerance_1: |-
