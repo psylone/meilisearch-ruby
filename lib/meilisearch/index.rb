@@ -9,6 +9,7 @@ module Meilisearch
   # Indexes store documents to be searched.
   # @see https://www.meilisearch.com/docs/learn/getting_started/indexes Learn more about indexes
   class Index < HTTPRequest
+    require 'meilisearch/index/compact'
     require 'meilisearch/index/documents'
     require 'meilisearch/index/facet_search'
     require 'meilisearch/index/search'
@@ -77,7 +78,6 @@ module Meilisearch
       response = http_patch indexes_path(id: @uid), Utils.transform_attributes(body)
       Models::Task.new(response, task_endpoint)
     end
-
     alias update_index update
 
     # Delete index
@@ -88,25 +88,6 @@ module Meilisearch
       Models::Task.new(response, task_endpoint)
     end
     alias delete_index delete
-
-    def indexes_path(id: nil)
-      "/indexes/#{id}"
-    end
-    private :indexes_path
-
-    def set_base_properties(index_hash)
-      @primary_key = index_hash['primaryKey']
-      @created_at = Time.parse(index_hash['createdAt'])
-      @updated_at = Time.parse(index_hash['updatedAt'])
-    end
-    private :set_base_properties
-
-    ### TASKS
-
-    def task_endpoint
-      @task_endpoint ||= Task.new(@base_url, @api_key, @options)
-    end
-    private :task_endpoint
 
     # Get a task belonging to this index, in Hash form.
     #
@@ -129,17 +110,20 @@ module Meilisearch
       task_endpoint.wait_for_task(task_uid, timeout_in_ms, interval_in_ms)
     end
 
-    ### COMPACT
+    private
 
-    # Run database compaction for this index.
-    #
-    # @note Meilisearch must temporarily duplicate the database during compaction. You need at least twice the current size of your database in free disk space.
-    #
-    # @see https://www.meilisearch.com/docs/reference/api/compact Meilisearch API Reference
-    # @return [Models::Task] The index compaction async task.
-    def compact
-      response = http_post "/indexes/#{@uid}/compact"
-      Models::Task.new(response, task_endpoint)
+    def indexes_path(id: nil)
+      "/indexes/#{id}"
+    end
+
+    def set_base_properties(index_hash)
+      @primary_key = index_hash['primaryKey']
+      @created_at = Time.parse(index_hash['createdAt'])
+      @updated_at = Time.parse(index_hash['updatedAt'])
+    end
+
+    def task_endpoint
+      @task_endpoint ||= Task.new(@base_url, @api_key, @options)
     end
   end
 end
